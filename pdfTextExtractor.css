@@ -1,0 +1,31 @@
+.upload-area {
+    border: 2px dashed #dddbda;
+    padding: 2rem;
+    text-align: center;
+    margin-bottom: 1rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.upload-area:hover {
+    background-color: #f3f2f2;
+}
+
+.upload-area.highlight {
+    background-color: #f3f2f2;
+    border-color: #1589ee;
+}
+
+.upload-area p {
+    margin-bottom: 1rem;
+}
+
+.file-input {
+    display: none;
+}
+
+.result-area {
+    max-height: 400px;
+    overflow-y: auto;
+}

@@ -1,0 +1,27 @@
+<template>
+    <lightning-card title="PDF Text Extractor" icon-name="custom:custom18">
+        <div class="slds-p-around_medium">
+            <div class="slds-text-heading_small slds-m-bottom_medium">
+                Upload a PDF file to extract its text content
+            </div>
+            
+            <div class="upload-area" ondrop={handleDrop} ondragover={handleDragOver} 
+                 ondragleave={handleDragLeave} onclick={handleBrowseClick}>
+                <p>Drag & drop your PDF file here or click to browse</p>
+                <input type="file" class="file-input" accept=".pdf" onchange={handleFileChange}>
+                <lightning-button label="Select PDF" onclick={handleBrowseClick}></lightning-button>
+            </div>
+            
+            <template if:true={isLoading}>
+                <div class="slds-align_absolute-center slds-m-around_large">
+                    <lightning-spinner alternative-text="Loading" size="large"></lightning-spinner>
+                    <div class="slds-m-top_small">Processing PDF...</div>
+                </div>
+            </template>
+            
+            <div class="result-area slds-m-top_medium" if:true={extractedText}>
+                <lightning-textarea label="Extracted Text" value={extractedText} readonly></lightning-textarea>
+            </div>
+        </div>
+    </lightning-card>
+</template>
