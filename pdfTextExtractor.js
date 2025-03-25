@@ -100,7 +100,7 @@ export default class PdfTextExtractor extends LightningElement {
     async extractTextFromPDF(file) {
         return new Promise((resolve, reject) => {
             const fileReader = new FileReader();
-            
+    
             fileReader.onload = async () => {
                 try {
                     const typedArray = new Uint8Array(fileReader.result);
@@ -110,30 +110,63 @@ export default class PdfTextExtractor extends LightningElement {
                         disableAutoFetch: true,
                         disableStream: true
                     });
-                    
+    
                     const pdf = await loadingTask.promise;
-                    let fullText = '';
-                    
+                    let extractedData = '';
+    
                     for (let i = 1; i <= pdf.numPages; i++) {
                         const page = await pdf.getPage(i);
+                        const viewport = page.getViewport({ scale: 1.5 }); // Scale to keep proportional sizes
                         const textContent = await page.getTextContent();
-                        const textItems = textContent.items.map(item => item.str);
-                        fullText += textItems.join(' ') + '\n\n';
+    
+                        let pageHtml = `<div class="pdf-page" style="
+                            position: relative;
+                            width: ${viewport.width}px;
+                            height: ${viewport.height}px;
+                            border: 1px solid #ddd;
+                            margin: 20px auto;
+                            background: white;
+                            overflow: hidden;
+                        ">`;
+    
+                        textContent.items.forEach(item => {
+                            const { str, transform, fontName } = item;
+                            const x = transform[4]; // X Position
+                            const y = viewport.height - transform[5]; // Flip Y axis for correct positioning
+                            const fontSize = transform[0]; // Extract font size
+    
+                            pageHtml += `
+                                <div style="
+                                    position: absolute;
+                                    left: ${x}px;
+                                    top: ${y}px;
+                                    font-size: ${fontSize}px;
+                                    font-family: ${fontName};
+                                    white-space: nowrap;
+                                ">
+                                    ${str}
+                                </div>`;
+                        });
+    
+                        pageHtml += '</div>'; // Close page container
+                        extractedData += pageHtml;
                     }
-                    
-                    resolve(fullText);
+    
+                    resolve(extractedData);
                 } catch (error) {
                     reject(error);
                 }
             };
-            
+    
             fileReader.onerror = () => {
                 reject(new Error('Failed to read file'));
             };
-            
+    
             fileReader.readAsArrayBuffer(file);
         });
     }
+    
+    
 
     showToast(title, message, variant) {
         this.dispatchEvent(

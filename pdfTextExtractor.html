@@ -20,7 +20,7 @@
             </template>
             
             <div class="result-area slds-m-top_medium" if:true={extractedText}>
-                <lightning-textarea label="Extracted Text" value={extractedText} readonly></lightning-textarea>
+                <lightning-formatted-rich-text value={extractedText}></lightning-formatted-rich-text>
             </div>
         </div>
     </lightning-card>
